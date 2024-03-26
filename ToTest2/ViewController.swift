@@ -13,6 +13,7 @@ import Vision
 
 
 
+
 class FocusNode: SCNNode {
     
     private var focusSquare: SCNNode?
