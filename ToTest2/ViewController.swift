@@ -10,6 +10,7 @@ import SceneKit
 import ARKit
 import CoreML
 import Vision
+import AVFoundation
 
 
 
@@ -72,6 +73,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var request: VNCoreMLRequest?
     var detectedObjects: [String] = []
     var boundingBoxNode: SCNNode?
+    
+    var spokenObjects: Set<String> = Set()
+        var speechQueue = DispatchQueue(label: "com.example.speechQueue")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -191,8 +195,39 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             // Adjust Y position to make the label appear above the wireframe bounding box
             textNode.position = SCNVector3(worldPoint.x, worldPoint.y + Float(height) / 2 + 0.05, worldPoint.z)
             
+            // Add the label text to the bounding box node
             self.boundingBoxNode?.addChildNode(textNode)
+            
+            // Speak out the label
+            self.addToSpeechQueue(text: objectLabel)
         }
+    }
+    
+    func addToSpokenObjectsAndSpeak(text: String) {
+            spokenObjects.insert(text)
+            
+            // Check if the label is not already spoken
+            if !spokenObjects.contains(text) {
+                // Add the label to the speech queue
+                addToSpeechQueue(text: text)
+            }
+        }
+
+    
+    func addToSpeechQueue(text: String) {
+        
+            speechQueue.async {
+                self.speak(text: text)
+            }
+        }
+
+    func speak(text: String) {
+        let speechUtterance = AVSpeechUtterance(string: text)
+        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        let synth = AVSpeechSynthesizer()
+        synth.speak(speechUtterance)
+        
+        while synth.isSpeaking { }
     }
 
     func createTextNode(text: String, fontSize: CGFloat, color: UIColor) -> SCNNode {
