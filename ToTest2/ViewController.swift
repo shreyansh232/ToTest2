@@ -15,6 +15,7 @@ import AVFoundation
 class FocusNode: SCNNode {
     
     private var focusSquare: SCNNode?
+    private var previousPosition: SCNVector3?
     
     override init() {
         super.init()
@@ -52,12 +53,29 @@ class FocusNode: SCNNode {
             let hitVector = SCNVector3(hitTransform.columns.3.x, hitTransform.columns.3.y, hitTransform.columns.3.z)
             focusSquare?.position = hitVector
             focusSquare?.isHidden = false
+            
+            // Draw line if previous position exists
+            if let previousPosition = previousPosition {
+                drawLine(from: previousPosition, to: hitVector, in: sceneView.scene)
+            }
+            
+            // Update previous position
+            previousPosition = hitVector
         } else {
             focusSquare?.isHidden = true
+            previousPosition = nil
         }
     }
+    
+    private func drawLine(from start: SCNVector3, to end: SCNVector3, in scene: SCNScene) {
+        let lineGeometry = SCNGeometry.line(from: start, to: end)
+        let lineMaterial = SCNMaterial()
+        lineMaterial.diffuse.contents = UIColor.blue // Change color here
+            lineGeometry.materials = [lineMaterial]
+        let lineNode = SCNNode(geometry: lineGeometry)
+        scene.rootNode.addChildNode(lineNode)
+    }
 }
-
 class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
@@ -180,7 +198,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
                 let boundingBoxNode = SCNNode(geometry: SCNGeometry.createWireframe(width: Float(width), height: Float(height), depth: depth))
                 boundingBoxNode.position = worldPoint
                 let material = SCNMaterial()
-                material.diffuse.contents = UIColor.red // Change color here
+                material.diffuse.contents = UIColor.green // Change color here
                 boundingBoxNode.geometry?.firstMaterial = material
 
                 // Add bounding box node to the scene
@@ -237,11 +255,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
                        focusSquare?.update(for: node.position, planeAnchor: planeAnchor, camera: sceneView.session.currentFrame?.camera, sceneView: sceneView)
                    }
 
-                   @IBAction func startButtonTapped(_ sender: UIButton) {
-                       startBallSpawning()
-                   }
-                   
-                   func startBallSpawning() {
+                  
+    @IBAction func StartButton(_ sender: UIButton) {
+        
+        startBallSpawning()
+    }
+    
+    
+    @IBAction func StopButton(_ sender: UIButton) {
+        stopBallSpawning()
+    }
+    
+    func startBallSpawning() {
                        let spawnInterval: TimeInterval = 1.0 // Adjust as needed
                        ballSpawnTimer = Timer.scheduledTimer(withTimeInterval: spawnInterval, repeats: true) { [weak self] timer in
                            self?.spawnBall()
@@ -282,23 +307,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
                }
 
 extension SCNGeometry {
-    static func line(from start: SCNVector3, to end: SCNVector3) -> SCNGeometry {
-        let indices: [Int32] = [0, 1]
-        let source = SCNGeometrySource(vertices: [start, end])
-        let element = SCNGeometryElement(indices: indices, primitiveType: .line)
-        return SCNGeometry(sources: [source], elements: [element])
-    }
-    
     static func createWireframe(width: Float, height: Float, depth: CGFloat) -> SCNGeometry {
+        // Increase wireframe width
+        let wireframeWidth: Float = 0.1
+        
         let vertices: [SCNVector3] = [
-            SCNVector3(-width / 2, -height / 2, 0),
-            SCNVector3(width / 2, -height / 2, 0),
-            SCNVector3(width / 2, height / 2, 0),
-            SCNVector3(-width / 2, height / 2, 0),
-            SCNVector3(-width / 2, -height / 2, Float(depth)),
-            SCNVector3(width / 2, -height / 2, Float(depth)),
-            SCNVector3(width / 2, height / 2, Float(depth)),
-            SCNVector3(-width / 2, height / 2, Float(depth)),
+            SCNVector3(-width / 2 - wireframeWidth, -height / 2 - wireframeWidth, 0),
+            SCNVector3(width / 2 + wireframeWidth, -height / 2 - wireframeWidth, 0),
+            SCNVector3(width / 2 + wireframeWidth, height / 2 + wireframeWidth, 0),
+            SCNVector3(-width / 2 - wireframeWidth, height / 2 + wireframeWidth, 0),
+            SCNVector3(-width / 2 - wireframeWidth, -height / 2 - wireframeWidth, Float(depth)),
+            SCNVector3(width / 2 + wireframeWidth, -height / 2 - wireframeWidth, Float(depth)),
+            SCNVector3(width / 2 + wireframeWidth, height / 2 + wireframeWidth, Float(depth)),
+            SCNVector3(-width / 2 - wireframeWidth, height / 2 + wireframeWidth, Float(depth)),
         ]
         
         let verticesSource = SCNGeometrySource(vertices: vertices)
@@ -314,4 +335,11 @@ extension SCNGeometry {
         
         return SCNGeometry(sources: [verticesSource], elements: [element])
     }
+    
+    static func line(from start: SCNVector3, to end: SCNVector3) -> SCNGeometry {
+           let indices: [Int32] = [0, 1]
+           let source = SCNGeometrySource(vertices: [start, end])
+           let element = SCNGeometryElement(indices: indices, primitiveType: .line)
+           return SCNGeometry(sources: [source], elements: [element])
+       }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		739AE2A32BB43590009374C5 /* YOLOv3TinyInt8LUT.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 739AE2A22BB43590009374C5 /* YOLOv3TinyInt8LUT.mlmodel */; };
 		73AA74322BB2C95200FA2A5C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AA74312BB2C95200FA2A5C /* AppDelegate.swift */; };
 		73AA74342BB2C95200FA2A5C /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 73AA74332BB2C95200FA2A5C /* art.scnassets */; };
 		73AA74362BB2C95200FA2A5C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AA74352BB2C95200FA2A5C /* ViewController.swift */; };
@@ -15,10 +16,10 @@
 		73AA743E2BB2C95500FA2A5C /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 73AA743D2BB2C95500FA2A5C /* Base */; };
 		73AA74462BB2C9C700FA2A5C /* FocusNode in Frameworks */ = {isa = PBXBuildFile; productRef = 73AA74452BB2C9C700FA2A5C /* FocusNode */; };
 		73AA74482BB303D400FA2A5C /* FocusNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AA74472BB303D400FA2A5C /* FocusNode.swift */; };
-		73AA745C2BB34D9800FA2A5C /* YOLOv3TinyInt8LUT.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 73AA745B2BB34D9800FA2A5C /* YOLOv3TinyInt8LUT.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		739AE2A22BB43590009374C5 /* YOLOv3TinyInt8LUT.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = YOLOv3TinyInt8LUT.mlmodel; path = ../../../Downloads/YOLOv3TinyInt8LUT.mlmodel; sourceTree = "<group>"; };
 		73AA742E2BB2C95200FA2A5C /* ToTest2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToTest2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		73AA74312BB2C95200FA2A5C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		73AA74332BB2C95200FA2A5C /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -27,7 +28,6 @@
 		73AA743A2BB2C95500FA2A5C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		73AA743D2BB2C95500FA2A5C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		73AA74472BB303D400FA2A5C /* FocusNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusNode.swift; sourceTree = "<group>"; };
-		73AA745B2BB34D9800FA2A5C /* YOLOv3TinyInt8LUT.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = YOLOv3TinyInt8LUT.mlmodel; path = ../../../Downloads/YOLOv3TinyInt8LUT.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +68,7 @@
 				73AA74372BB2C95200FA2A5C /* Main.storyboard */,
 				73AA743A2BB2C95500FA2A5C /* Assets.xcassets */,
 				73AA743C2BB2C95500FA2A5C /* LaunchScreen.storyboard */,
-				73AA745B2BB34D9800FA2A5C /* YOLOv3TinyInt8LUT.mlmodel */,
+				739AE2A22BB43590009374C5 /* YOLOv3TinyInt8LUT.mlmodel */,
 			);
 			path = ToTest2;
 			sourceTree = "<group>";
@@ -152,7 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				73AA74362BB2C95200FA2A5C /* ViewController.swift in Sources */,
-				73AA745C2BB34D9800FA2A5C /* YOLOv3TinyInt8LUT.mlmodel in Sources */,
+				739AE2A32BB43590009374C5 /* YOLOv3TinyInt8LUT.mlmodel in Sources */,
 				73AA74482BB303D400FA2A5C /* FocusNode.swift in Sources */,
 				73AA74322BB2C95200FA2A5C /* AppDelegate.swift in Sources */,
 			);

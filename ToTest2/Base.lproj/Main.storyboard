@@ -25,7 +25,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Stop"/>
                                 <connections>
-                                    <action selector="StopButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="D2a-EI-Gnx"/>
+                                    <action selector="StopButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="MEp-1R-P84"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zPc-c7-DmE">
@@ -34,7 +34,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Start"/>
                                 <connections>
-                                    <action selector="StartButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="LcJ-fQ-Inl"/>
+                                    <action selector="StartButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="GHx-UN-3nh"/>
                                 </connections>
                             </button>
                         </subviews>
