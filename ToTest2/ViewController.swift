@@ -12,9 +12,6 @@ import CoreML
 import Vision
 import AVFoundation
 
-
-
-
 class FocusNode: SCNNode {
     
     private var focusSquare: SCNNode?
@@ -61,7 +58,7 @@ class FocusNode: SCNNode {
     }
 }
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet var startButton: UIButton!
@@ -73,10 +70,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var request: VNCoreMLRequest?
     var detectedObjects: [String] = []
     var boundingBoxNode: SCNNode?
-    
     var spokenObjects: Set<String> = Set()
-        var speechQueue = DispatchQueue(label: "com.example.speechQueue")
-    
+    let speechSynthesizer = AVSpeechSynthesizer()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -117,6 +113,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             self?.processDetection(for: request, error: error)
         }
         request?.imageCropAndScaleOption = .scaleFit
+        
+        // Set speech synthesizer delegate
+        speechSynthesizer.delegate = self
     }
 
     func processDetection(for request: VNRequest, error: Error?) {
@@ -124,14 +123,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             return
         }
 
-        // Clear previous detections
-        detectedObjects.removeAll()
-
         for result in results {
-            // Access the detected objects directly from the observation
             let objectLabel = result.labels.first?.identifier ?? "Unknown"
             let confidence = result.confidence
             detectedObjects.append("\(objectLabel) - \(String(format: "%.2f", confidence * 100))%")
+            
+            // Check if the object has already been spoken
+            if !spokenObjects.contains(objectLabel) {
+                // Speak out the object
+                speak(text: objectLabel)
+                // Add the object to the spoken set
+                spokenObjects.insert(objectLabel)
+            }
             
             // Draw bounding box around the detected object
             drawBoundingBox(for: result)
@@ -186,126 +189,97 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
             
             // Remove previous text node
-            self.boundingBoxNode?.childNodes.filter { $0.geometry is SCNText }.forEach { $0.removeFromParentNode() }
-            
-            // Display label
-            let objectLabel = observation.labels.first?.identifier ?? "Unknown"
-            let textNode = self.createTextNode(text: objectLabel, fontSize: 0.01, color: UIColor.yellow)
-            
-            // Adjust Y position to make the label appear above the wireframe bounding box
-            textNode.position = SCNVector3(worldPoint.x, worldPoint.y + Float(height) / 2 + 0.05, worldPoint.z)
-            
-            // Add the label text to the bounding box node
-            self.boundingBoxNode?.addChildNode(textNode)
-            
-            // Speak out the label
-            self.addToSpeechQueue(text: objectLabel)
-        }
-    }
-    
-    func addToSpokenObjectsAndSpeak(text: String) {
-            spokenObjects.insert(text)
-            
-            // Check if the label is not already spoken
-            if !spokenObjects.contains(text) {
-                // Add the label to the speech queue
-                addToSpeechQueue(text: text)
-            }
-        }
+            self.boundingBoxNode?.childNodes.filter { $0.geometry is SCNText }.forEach {
+                $0.removeFromParentNode() }
+                           
+                           // Display label
+                           let objectLabel = observation.labels.first?.identifier ?? "Unknown"
+                           let textNode = self.createTextNode(text: objectLabel, fontSize: 0.01, color:UIColor.yellow)
+                           
+                           // Adjust Y position to make the label appear above the wireframe bounding box
+                           textNode.position = SCNVector3(worldPoint.x, worldPoint.y + Float(height) / 2 + 0.05, worldPoint.z)
+                           
+                           // Add the label text to the bounding box node
+                           self.boundingBoxNode?.addChildNode(textNode)
+                       }
+                   }
+                   
+                   func speak(text: String) {
+                       let speechUtterance = AVSpeechUtterance(string: text)
+                       speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                       speechSynthesizer.speak(speechUtterance)
+                   }
+                   
+                   func createTextNode(text: String, fontSize: CGFloat, color: UIColor) -> SCNNode {
+                       let textGeometry = SCNText(string: text, extrusionDepth: 0.01)
+                       textGeometry.firstMaterial?.diffuse.contents = color
+                       let textNode = SCNNode(geometry: textGeometry)
+                       textNode.scale = SCNVector3(fontSize, fontSize, fontSize)
+                       return textNode
+                   }
+                   
+                   // ARSCNViewDelegate method
+                   func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+                       guard let currentFrame = sceneView.session.currentFrame else {
+                           return
+                       }
+                       
+                       // Convert ARFrame to CIImage
+                       let pixelBuffer = currentFrame.capturedImage
+                       let image = CIImage(cvPixelBuffer: pixelBuffer)
+                       
+                       // Perform object detection
+                       let handler = VNImageRequestHandler(ciImage: image)
+                       try? handler.perform([request!])
+                       
+                       // Handle ball spawning
+                       guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+                       focusSquare?.update(for: node.position, planeAnchor: planeAnchor, camera: sceneView.session.currentFrame?.camera, sceneView: sceneView)
+                   }
 
-    
-    func addToSpeechQueue(text: String) {
-        
-            speechQueue.async {
-                self.speak(text: text)
-            }
-        }
-
-    func speak(text: String) {
-        let speechUtterance = AVSpeechUtterance(string: text)
-        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
-        let synth = AVSpeechSynthesizer()
-        synth.speak(speechUtterance)
-        
-        while synth.isSpeaking { }
-    }
-
-    func createTextNode(text: String, fontSize: CGFloat, color: UIColor) -> SCNNode {
-        let textGeometry = SCNText(string: text, extrusionDepth: 0.01)
-        textGeometry.firstMaterial?.diffuse.contents = color
-        let textNode = SCNNode(geometry: textGeometry)
-        textNode.scale = SCNVector3(fontSize, fontSize, fontSize)
-        return textNode
-    }
-    
-    // ARSCNViewDelegate method
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        guard let currentFrame = sceneView.session.currentFrame else {
-            return
-        }
-        
-        // Convert ARFrame to CIImage
-        let pixelBuffer = currentFrame.capturedImage
-        let image = CIImage(cvPixelBuffer: pixelBuffer)
-        
-        // Perform object detection
-        let handler = VNImageRequestHandler(ciImage: image)
-        try? handler.perform([request!])
-        
-        // Handle ball spawning
-        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
-        focusSquare?.update(for: node.position, planeAnchor: planeAnchor, camera: sceneView.session.currentFrame?.camera, sceneView: sceneView)
-    }
-    
-    func startBallSpawning() {
-        let spawnInterval: TimeInterval = 1.0 // Adjust as needed
-        ballSpawnTimer = Timer.scheduledTimer(withTimeInterval: spawnInterval, repeats: true) { [weak self] timer in
-            self?.spawnBall()
-        }
-    }
-    
-    func spawnBall() {
-        guard let sceneView = self.sceneView else { return }
-        
-        let ballNode = SCNNode(geometry: SCNSphere(radius: 0.05)) // Adjust radius as needed
-        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
-        ballNode.position = self.calculateBallSpawnPosition()
-        sceneView.scene.rootNode.addChildNode(ballNode)
-    }
-    
-    func calculateBallSpawnPosition() -> SCNVector3 {
-        // Use last known ball spawn position or default to origin if not available
-        let position = lastBallSpawnPosition ?? SCNVector3(0, 0, -1)
-        
-        // Adjust position based on user movement (e.g., forward)
-        let forwardOffset: Float = 0.2 // Adjust as needed
-        let currentPosition = sceneView.pointOfView?.position ?? SCNVector3Zero
-        let forwardVector = sceneView.pointOfView?.worldFront ?? SCNVector3(0, 0, -1)
-        let newPosition = SCNVector3(currentPosition.x + forwardVector.x * forwardOffset,
-                                      currentPosition.y + forwardVector.y * forwardOffset,
-                                      currentPosition.z + forwardVector.z * forwardOffset)
-        
-        // Update last ball spawn position
-        lastBallSpawnPosition = newPosition
-        
-        return newPosition
-    }
-    @IBAction func StartButton(_ sender: UIButton) {
-        startBallSpawning()
-    }
-    
-    
-    @IBAction func StopButton(_ sender: UIButton) {
-        stopBallSpawning()
-    }
-    
-    // MARK: - Ball Spawning Control
-    
-    func stopBallSpawning() {
-        ballSpawnTimer?.invalidate()
-        ballSpawnTimer = nil
-    }
-}
+                   @IBAction func startButtonTapped(_ sender: UIButton) {
+                       startBallSpawning()
+                   }
+                   
+                   func startBallSpawning() {
+                       let spawnInterval: TimeInterval = 1.0 // Adjust as needed
+                       ballSpawnTimer = Timer.scheduledTimer(withTimeInterval: spawnInterval, repeats: true) { [weak self] timer in
+                           self?.spawnBall()
+                       }
+                   }
+                   
+                   func spawnBall() {
+                       guard let sceneView = self.sceneView else { return }
+                       
+                       let ballNode = SCNNode(geometry: SCNSphere(radius: 0.05)) // Adjust radius as needed
+                       ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+                       ballNode.position = self.calculateBallSpawnPosition()
+                       sceneView.scene.rootNode.addChildNode(ballNode)
+                   }
+                   
+                   func calculateBallSpawnPosition() -> SCNVector3 {
+                       // Use last known ball spawn position or default to origin if not available
+                       let position = lastBallSpawnPosition ?? SCNVector3(0, 0, -1)
+                       
+                       // Adjust position based on user movement (e.g., forward)
+                       let forwardOffset: Float = 0.2 // Adjust as needed
+                       let currentPosition = sceneView.pointOfView?.position ?? SCNVector3Zero
+                       let forwardVector = sceneView.pointOfView?.worldFront ?? SCNVector3(0, 0, -1)
+                       let newPosition = SCNVector3(currentPosition.x + forwardVector.x * forwardOffset,
+                                                     currentPosition.y + forwardVector.y * forwardOffset,
+                                                     currentPosition.z + forwardVector.z * forwardOffset)
+                       
+                       // Update last ball spawn position
+                       lastBallSpawnPosition = newPosition
+                       
+                       return newPosition
+                   }
+                   
+                   func stopBallSpawning() {
+                       ballSpawnTimer?.invalidate()
+                       ballSpawnTimer = nil
+                   }
+               }
 
 extension SCNGeometry {
     static func line(from start: SCNVector3, to end: SCNVector3) -> SCNGeometry {
