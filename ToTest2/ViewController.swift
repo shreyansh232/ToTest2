@@ -541,9 +541,6 @@ extension ViewController : CLLocationManagerDelegate{
         mapView.setRegion(region, animated: true)
         mapView.showsUserLocation = true
         
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = coodinates
-        annotation.title = "You Are Here"
-        mapView.addAnnotation(annotation)
+  
     }
 }
