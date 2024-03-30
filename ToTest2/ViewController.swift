@@ -12,6 +12,8 @@ import CoreML
 import Vision
 import AVFoundation
 import Speech
+import MapKit
+import CoreLocation
 
 class FocusNode: SCNNode {
     
@@ -76,7 +78,7 @@ class FocusNode: SCNNode {
     private func drawLine(from start: SCNVector3, to end: SCNVector3, in scene: SCNScene) {
         let lineGeometry = SCNGeometry.line(from: start, to: end)
         let lineMaterial = SCNMaterial()
-        lineMaterial.diffuse.contents = UIColor.blue // Change color here
+        lineMaterial.diffuse.contents = UIColor.orange // Change color here
             lineGeometry.materials = [lineMaterial]
         let lineNode = SCNNode(geometry: lineGeometry)
         scene.rootNode.addChildNode(lineNode)
@@ -86,6 +88,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
 
     
     
+    @IBOutlet var mapView: MKMapView!
     
     
     @IBOutlet var StartStopButton: UIButton!
@@ -95,7 +98,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
     
     
     @IBOutlet var sceneView: ARSCNView!
+    
     @IBOutlet var startButton: UIButton!
+    
+    
+    @IBOutlet var stopButton: UIButton!
     
     var focusSquare: FocusNode?
     var lastBallSpawnPosition: SCNVector3?
@@ -117,10 +124,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
     
     var lang: String = "en-US"
     
-
+    let locationManager = CLLocationManager()
     
     
     override func viewDidLoad() {
+        
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+        
         super.viewDidLoad()
 
         // Set the view's delegate
@@ -357,68 +370,79 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
     
     
     func startRecording() {
-           
-           if recognitionTask != nil {
-               recognitionTask?.cancel()
-               recognitionTask = nil
-           }
-           
-           let audioSession = AVAudioSession.sharedInstance()
-           do {
-               try audioSession.setCategory(AVAudioSession.Category.record)
-               try audioSession.setMode(AVAudioSession.Mode.measurement)
-               try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-           } catch {
-               print("audioSession properties weren't set because of an error.")
-           }
-           
-           recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-           
-           let inputNode = audioEngine.inputNode
-           
-           guard let recognitionRequest = recognitionRequest else {
-               fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
-           }
-           
-           recognitionRequest.shouldReportPartialResults = true
-           
-           recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { (result, error) in
-               
-               var isFinal = false
-               
-               if result != nil {
-                   
-                   self.TextView.text = result?.bestTranscription.formattedString
-                   isFinal = (result?.isFinal)!
-               }
-               
-               if error != nil || isFinal {
-                   self.audioEngine.stop()
-                   inputNode.removeTap(onBus: 0)
-                   
-                   self.recognitionRequest = nil
-                   self.recognitionTask = nil
-                   
-                   self.StartStopButton.isEnabled = true
-               }
-           })
-           
-           let recordingFormat = inputNode.outputFormat(forBus: 0)
-           inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
-               self.recognitionRequest?.append(buffer)
-           }
-           
-           audioEngine.prepare()
-           
-           do {
-               try audioEngine.start()
-           } catch {
-               print("audioEngine couldn't start because of an error.")
-           }
-           
-           TextView.text = "Say something, I'm listening!"
-           
-       }
+        if recognitionTask != nil {
+            recognitionTask?.cancel()
+            recognitionTask = nil
+        }
+        
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(AVAudioSession.Category.record)
+            try audioSession.setMode(AVAudioSession.Mode.measurement)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("audioSession properties weren't set because of an error.")
+        }
+        
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        
+        let inputNode = audioEngine.inputNode
+        
+        guard let recognitionRequest = recognitionRequest else {
+            fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
+        }
+        
+        recognitionRequest.shouldReportPartialResults = true
+        
+        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { (result, error) in
+            
+            var isFinal = false
+            
+            if let result = result {
+                self.TextView.text = result.bestTranscription.formattedString
+                isFinal = result.isFinal
+                
+                // Check if the recognized text contains "start"
+                if result.bestTranscription.formattedString.lowercased().contains("start") {
+                    // Programmatically trigger StartButton action
+                    self.StartButton(self.startButton)
+                    
+                    
+                }
+                else if result.bestTranscription.formattedString.lowercased().contains("stop") {
+                    // Programmatically trigger StopButton action
+                    self.StopButton(self.stopButton)
+                }
+            }
+            
+            if error != nil || isFinal {
+                self.audioEngine.stop()
+                inputNode.removeTap(onBus: 0)
+                
+                self.recognitionRequest = nil
+                self.recognitionTask = nil
+                
+                self.StartStopButton.isEnabled = true
+            }
+        })
+        
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, when) in
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        
+        do {
+            try audioEngine.start()
+        } catch {
+            print("audioEngine couldn't start because of an error.")
+        }
+        
+        TextView.text = "Say something, I'm listening!"
+    }
+    
+    
        
        func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
            if available {
@@ -430,7 +454,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
     
     func startBallSpawning() {
                        let spawnInterval: TimeInterval = 1.0 // Adjust as needed
-                       ballSpawnTimer = Timer.scheduledTimer(withTimeInterval: spawnInterval, repeats: true) { [weak self] timer in
+                       ballSpawnTimer = Timer.scheduledTimer(withTimeInterval: spawnInterval, repeats: true) { [weak self]  timer in
                            self?.spawnBall()
                        }
                    }
@@ -504,4 +528,22 @@ extension SCNGeometry {
            let element = SCNGeometryElement(indices: indices, primitiveType: .line)
            return SCNGeometry(sources: [source], elements: [element])
        }
+}
+ 
+extension ViewController : CLLocationManagerDelegate{
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        let coodinates: CLLocationCoordinate2D = manager.location!.coordinate
+        let spanDegree = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
+        let region = MKCoordinateRegion(center: coodinates, span: spanDegree)
+        
+        mapView.setRegion(region, animated: true)
+        mapView.showsUserLocation = true
+        
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coodinates
+        annotation.title = "You Are Here"
+        mapView.addAnnotation(annotation)
+    }
 }

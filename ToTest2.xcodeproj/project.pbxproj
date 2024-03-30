@@ -309,6 +309,7 @@
 				DEVELOPMENT_TEAM = 458RNVZ66L;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Please allow to see your current location";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone Use";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Recognize Speech";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -341,6 +342,7 @@
 				DEVELOPMENT_TEAM = 458RNVZ66L;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Please allow to see your current location";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone Use";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Recognize Speech";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
