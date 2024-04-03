@@ -18,10 +18,6 @@ import CoreLocation
 class FocusNode: SCNNode {
     
     
-    
-    
-    
-    
     private var focusSquare: SCNNode?
     private var previousPosition: SCNVector3?
     
@@ -127,12 +123,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
     let locationManager = CLLocationManager()
     
     
+    
+    var savedPaths: [String: Data] = [:]
+    
     override func viewDidLoad() {
         
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
+        mapView.showsUserLocation = true
+                mapView.delegate = self
         
         super.viewDidLoad()
 
@@ -214,6 +215,62 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
             }
         }
     }
+    
+    func savePath(name: String) {
+            // Save the current world map data
+            sceneView.session.getCurrentWorldMap { worldMap, error in
+                guard let worldMap = worldMap else {
+                    print("Error saving world map: \(error?.localizedDescription ?? "Unknown error")")
+                    return
+                }
+                do {
+                    let archivedData = try NSKeyedArchiver.archivedData(withRootObject: worldMap, requiringSecureCoding: true)
+                    self.savedPaths[name] = archivedData
+                    // Optionally, save the archivedData wherever appropriate (e.g., UserDefaults, file system)
+                } catch {
+                    print("Error archiving world map data: \(error.localizedDescription)")
+                }
+            }
+        }
+
+    
+    func restorePath(name: String) {
+            guard let data = savedPaths[name] else {
+                print("Path with name \(name) not found.")
+                return
+            }
+            restoreWorldMap(data)
+            // Optionally, update UI or perform additional tasks after restoring the path
+            spawnBallsAlongPath()
+        }
+    
+    
+    func restoreWorldMap(_ data: Data) {
+           do {
+               guard let unarchivedData = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data) else {
+                   print("Error unarchiving world map data")
+                   return
+               }
+               let configuration = ARWorldTrackingConfiguration()
+               configuration.initialWorldMap = unarchivedData
+               sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+           } catch {
+               print("Error unarchiving world map data: \(error.localizedDescription)")
+           }
+       }
+    
+    
+    func spawnBallsAlongPath() {
+            // Code to spawn balls along the path goes here
+            // You can use the same logic as the existing ball spawning method
+        
+        guard let sceneView = self.sceneView else { return }
+        
+        let ballNode = SCNNode(geometry: SCNSphere(radius: 0.05)) // Adjust radius as needed
+        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+        ballNode.position = self.calculateBallSpawnPosition()
+        sceneView.scene.rootNode.addChildNode(ballNode)
+        }
 
     func processDetection(for request: VNRequest, error: Error?) {
         guard let results = request.results as? [VNRecognizedObjectObservation] else {
@@ -344,7 +401,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
     @IBAction func StopButton(_ sender: UIButton) {
         stopBallSpawning()
         
-        
+        let pathName = "MyPath" // Set a default path name or provide an interface for the user to input a name
+                savePath(name: pathName)
+                // Remove existing ball nodes from the scene
+                removeBallNodes()
         
     }
     
@@ -368,7 +428,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
         }
     }
     
-    
+    func removeBallNodes() {
+            sceneView.scene.rootNode.enumerateChildNodes { (node, _) in
+                if node.name == "ballNode" {
+                    node.removeFromParentNode()
+                }
+            }
+        }
     func startRecording() {
         if recognitionTask != nil {
             recognitionTask?.cancel()
@@ -398,6 +464,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
             
             var isFinal = false
             
+            if ((result?.bestTranscription.formattedString.lowercased().starts(with: "navigate to")) != nil) {
+                // Extract the path name from the command
+                let command = result!.bestTranscription.formattedString
+                let pathName = command.replacingOccurrences(of: "navigate to", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                // Restore and display the path
+                self.restorePath(name: pathName)
+            }
+        
+            
             if let result = result {
                 self.TextView.text = result.bestTranscription.formattedString
                 isFinal = result.isFinal
@@ -413,6 +488,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
                     // Programmatically trigger StopButton action
                     self.StopButton(self.stopButton)
                 }
+                else if result.bestTranscription.formattedString.lowercased().starts(with: "navigate to") {
+                               // Extract destination from the command
+                               let command = result.bestTranscription.formattedString
+                               let destination = command.replacingOccurrences(of: "navigate to", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                               
+                               // Calculate and display route to the destination
+                               self.calculateAndDisplayRoute(to: destination)
+                           }
             }
             
             if error != nil || isFinal {
@@ -442,7 +525,43 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVSpeechSynthesizerDe
         TextView.text = "Say something, I'm listening!"
     }
     
-    
+    func calculateAndDisplayRoute(to destination: String) {
+           // Create a request to geocode the destination address
+           let geocoder = CLGeocoder()
+           geocoder.geocodeAddressString(destination) { (placemarks, error) in
+               guard let destinationPlacemark = placemarks?.first?.location else {
+                   print("Error finding destination location: \(error?.localizedDescription ?? "Unknown error")")
+                   return
+               }
+               
+               // Create a request to calculate the route
+               let request = MKDirections.Request()
+               request.source = MKMapItem.forCurrentLocation()
+               request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destinationPlacemark.coordinate))
+               request.requestsAlternateRoutes = false
+               request.transportType = .walking // You can change this to .walking if needed
+               
+               // Create the directions object
+               let directions = MKDirections(request: request)
+               
+               // Calculate the route
+               directions.calculate { (response, error) in
+                   guard let route = response?.routes.first else {
+                       print("Error finding route: \(error?.localizedDescription ?? "Unknown error")")
+                       return
+                   }
+                   
+                   // Remove any existing overlays on the map
+                   self.mapView.removeOverlays(self.mapView.overlays)
+                   
+                   // Add the route to the map as an overlay
+                   self.mapView.addOverlay(route.polyline)
+                   
+                   // Adjust the map to show the route
+                   self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+               }
+           }
+       }
        
        func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
            if available {
@@ -542,5 +661,16 @@ extension ViewController : CLLocationManagerDelegate{
         mapView.showsUserLocation = true
         
   
+    }
+}
+extension ViewController: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let polyline = overlay as? MKPolyline {
+            let renderer = MKPolylineRenderer(polyline: polyline)
+            renderer.strokeColor = UIColor.systemBlue
+            renderer.lineWidth = 3
+            return renderer
+        }
+        return MKOverlayRenderer(overlay: overlay)
     }
 }
