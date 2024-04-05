@@ -3,7 +3,6 @@
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
-        <capability name="Map view configurations" minToolsVersion="14.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -17,66 +16,91 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
-                                <rect key="frame" x="0.0" y="17" width="393" height="818"/>
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6U2-Ps-Inp">
+                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
                             </arscnView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D8G-MN-yEI">
-                                <rect key="frame" x="225" y="745" width="83" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Stop"/>
-                                <connections>
-                                    <action selector="StopButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="lpr-ZW-z8t"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zPc-c7-DmE">
-                                <rect key="frame" x="93" y="745" width="83" height="35"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QUI-Bw-ABR">
+                                <rect key="frame" x="59" y="737" width="62" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Start"/>
                                 <connections>
-                                    <action selector="StartButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="WjP-bV-ITf"/>
+                                    <action selector="StartButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="Iz0-pz-qwA"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="YyM-Fp-aba">
-                                <rect key="frame" x="76" y="78" width="240" height="68"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PDL-Qr-zoK">
+                                <rect key="frame" x="279" y="737" width="60" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Stop"/>
+                                <connections>
+                                    <action selector="StopButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="416-Wg-Jhv"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="YoN-xF-C5K">
+                                <rect key="frame" x="76" y="111" width="240" height="83"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tuB-Jl-GaW">
-                                <rect key="frame" x="157" y="674" width="79" height="35"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J0a-Cq-TU1">
+                                <rect key="frame" x="59" y="681" width="66" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Path1"/>
+                                <connections>
+                                    <action selector="pathButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="7gc-1q-wfo"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="12t-DI-kFW">
+                                <rect key="frame" x="167" y="681" width="69" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Path2"/>
+                                <connections>
+                                    <action selector="path2ButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="QVw-Cu-ND5"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ZB-vZ-CrU">
+                                <rect key="frame" x="275" y="681" width="69" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Path3"/>
+                                <connections>
+                                    <action selector="path3ButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="s3Z-At-OoR"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4lp-cI-mIL">
+                                <rect key="frame" x="162" y="737" width="79" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Record"/>
                                 <connections>
-                                    <action selector="startStopAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="759-Mw-0TE"/>
+                                    <action selector="startStopAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="7De-FA-cNN"/>
                                 </connections>
                             </button>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VDH-kf-VVO">
-                                <rect key="frame" x="76" y="502" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <standardMapConfiguration key="preferredConfiguration"/>
-                            </mapView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fQZ-KI-GVf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
-                            <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
+                            <constraint firstItem="6U2-Ps-Inp" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="5x7-Xp-fiz"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="6U2-Ps-Inp" secondAttribute="trailing" id="BBa-SN-owS"/>
+                            <constraint firstItem="6U2-Ps-Inp" firstAttribute="top" secondItem="fQZ-KI-GVf" secondAttribute="top" id="QzW-3v-PZo"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="6U2-Ps-Inp" secondAttribute="bottom" id="RYS-x4-K2w"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="StartStopButton" destination="tuB-Jl-GaW" id="En3-Jj-luC"/>
-                        <outlet property="TextView" destination="YyM-Fp-aba" id="VKC-s6-Frc"/>
-                        <outlet property="mapView" destination="VDH-kf-VVO" id="2MI-Pq-A9O"/>
-                        <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
-                        <outlet property="startButton" destination="zPc-c7-DmE" id="mlv-ql-Dm5"/>
-                        <outlet property="stopButton" destination="D8G-MN-yEI" id="qD2-8T-mf0"/>
+                        <outlet property="StartStopButton" destination="4lp-cI-mIL" id="E5G-4c-j3T"/>
+                        <outlet property="TextView" destination="YoN-xF-C5K" id="EKX-4b-QKs"/>
+                        <outlet property="path2Button" destination="12t-DI-kFW" id="UfB-LG-0OW"/>
+                        <outlet property="path3Button" destination="2ZB-vZ-CrU" id="nDZ-zZ-ahu"/>
+                        <outlet property="pathButton" destination="J0a-Cq-TU1" id="CFe-Kb-tHj"/>
+                        <outlet property="sceneView" destination="6U2-Ps-Inp" id="Lqr-Dq-IQ0"/>
+                        <outlet property="startButton" destination="QUI-Bw-ABR" id="bAW-pA-TWg"/>
+                        <outlet property="stopButton" destination="PDL-Qr-zoK" id="Q6j-b0-pFK"/>
+                        <outlet property="textView" destination="YoN-xF-C5K" id="SBH-2p-gfJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
