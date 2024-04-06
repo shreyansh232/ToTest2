@@ -12,6 +12,7 @@ import Speech
 
 class FocusNode: SCNNode {
     private var focusSquare: SCNNode?
+    
 
     override init() {
         super.init()
@@ -64,6 +65,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, SFSpeechRecognizerDel
     @IBOutlet var TextView: UITextView!
     @IBOutlet var path2Button: UIButton!
     @IBOutlet var path3Button: UIButton!
+    @IBOutlet var textLabel: UILabel!
+    
 
     var focusSquare: FocusNode?
     var lastBallSpawnPosition: SCNVector3?
