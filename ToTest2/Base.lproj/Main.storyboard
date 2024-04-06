@@ -3,6 +3,7 @@
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
+        <capability name="Map view configurations" minToolsVersion="14.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -25,7 +26,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Start"/>
                                 <connections>
-                                    <action selector="StartButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="Iz0-pz-qwA"/>
+                                    <action selector="StartButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="h5t-3p-r3R"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PDL-Qr-zoK">
@@ -34,11 +35,11 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Stop"/>
                                 <connections>
-                                    <action selector="StopButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="416-Wg-Jhv"/>
+                                    <action selector="StopButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="2kl-lW-0Sl"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="YoN-xF-C5K">
-                                <rect key="frame" x="76" y="111" width="240" height="83"/>
+                                <rect key="frame" x="16" y="77" width="201" height="83"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="textColor" systemColor="labelColor"/>
@@ -51,7 +52,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Path1"/>
                                 <connections>
-                                    <action selector="pathButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="7gc-1q-wfo"/>
+                                    <action selector="pathButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="E6W-kd-dfy"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="12t-DI-kFW">
@@ -60,17 +61,14 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Path2"/>
                                 <connections>
-                                    <action selector="path2ButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="QVw-Cu-ND5"/>
+                                    <action selector="path2ButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="s4z-R9-FbC"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ZB-vZ-CrU">
-                                <rect key="frame" x="275" y="681" width="69" height="35"/>
+                                <rect key="frame" x="275" y="1208" width="69" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Path3"/>
-                                <connections>
-                                    <action selector="path3ButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="s3Z-At-OoR"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4lp-cI-mIL">
                                 <rect key="frame" x="162" y="737" width="79" height="35"/>
@@ -78,7 +76,21 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Record"/>
                                 <connections>
-                                    <action selector="startStopAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="7De-FA-cNN"/>
+                                    <action selector="startStopAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="ud5-LG-WnF"/>
+                                </connections>
+                            </button>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ee4-fj-Sxe">
+                                <rect key="frame" x="235" y="46" width="158" height="199"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <standardMapConfiguration key="preferredConfiguration"/>
+                            </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uN7-Aa-pf0">
+                                <rect key="frame" x="275" y="680" width="69" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Path3"/>
+                                <connections>
+                                    <action selector="path3ButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="5mP-j2-MfE"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -92,15 +104,16 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="StartStopButton" destination="4lp-cI-mIL" id="E5G-4c-j3T"/>
-                        <outlet property="TextView" destination="YoN-xF-C5K" id="EKX-4b-QKs"/>
-                        <outlet property="path2Button" destination="12t-DI-kFW" id="UfB-LG-0OW"/>
-                        <outlet property="path3Button" destination="2ZB-vZ-CrU" id="nDZ-zZ-ahu"/>
-                        <outlet property="pathButton" destination="J0a-Cq-TU1" id="CFe-Kb-tHj"/>
+                        <outlet property="StartStopButton" destination="4lp-cI-mIL" id="5gN-wM-hQQ"/>
+                        <outlet property="TextView" destination="YoN-xF-C5K" id="4ay-2f-hgT"/>
+                        <outlet property="mapView" destination="ee4-fj-Sxe" id="N0S-Ax-vpB"/>
+                        <outlet property="path2Button" destination="12t-DI-kFW" id="RLO-AQ-2Wf"/>
+                        <outlet property="path3Button" destination="uN7-Aa-pf0" id="FXG-Mw-gk3"/>
+                        <outlet property="pathButton" destination="J0a-Cq-TU1" id="7Iu-2K-c1F"/>
                         <outlet property="sceneView" destination="6U2-Ps-Inp" id="Lqr-Dq-IQ0"/>
-                        <outlet property="startButton" destination="QUI-Bw-ABR" id="bAW-pA-TWg"/>
-                        <outlet property="stopButton" destination="PDL-Qr-zoK" id="Q6j-b0-pFK"/>
-                        <outlet property="textView" destination="YoN-xF-C5K" id="SBH-2p-gfJ"/>
+                        <outlet property="startButton" destination="QUI-Bw-ABR" id="maX-Yo-vQD"/>
+                        <outlet property="startStopButton" destination="4lp-cI-mIL" id="Rhj-bR-ffI"/>
+                        <outlet property="stopButton" destination="PDL-Qr-zoK" id="4DU-mt-LcP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
